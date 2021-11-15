@@ -76,15 +76,15 @@ function validarGeneral(e){
     // volver a validar todos los campos
     // if(preguntar si el codigo es correcto && pregunto si el producto es correcto)
     // si creamos una variable dentro de las llaves, fuera de las mismas no funcionan
-    let alerta = document.querySelector('#msjAlerta');
+    let alerta = document.getElementById('msjAlerta');
     if(campoRequerido(campoCodigo) && campoRequerido(campoProducto) &&
     campoRequerido(campoDescripcion) && validarNumeros(campoCantidad)
     && validarURL(campoURL)){
         console.log('si paso la validacion');
-        alerta.className = 'alert alert-warning ms-5 my-3 d-none text-center lead';
+        alerta.className = 'alert alert-danger ms-5 my-3 d-none text-center lead';
     } else {
         console.log('no paso la validacion');
-        alerta.className = 'alert alert-warning ms-5 my-3 text-center lead';
+        alerta.className = 'alert alert-danger ms-5 my-3 text-center lead';
     }
 }
 

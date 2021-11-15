@@ -58,6 +58,9 @@
                 <div class="mb-3">
                     <label for="cantidad" class="form-label">Cantidad</label>
                     <input type="text" class="form-control" id="cantidad" placeholder="10">
+                    <div class="invalid-feedback">
+                      Debe ingresar de 1 a 3 cifras como número
+                    </div>
                 </div>
                 <div class="mb-3">
                     <label for="url" class="form-label">URL</label>
@@ -65,7 +68,7 @@
                 </div>
                 <button class="btn btn-primary" type="submit">Guardar</button>
                 <!-- d-none display none es para que no se vea en el el maquetado algo -->
-                <div class="alert alert-warning ms-5 my-3 d-none text-center lead" role="alert" id="msjAlerta">
+                <div class="alert alert-danger ms-5 my-3 d-none text-center lead" role="alert" id="msjAlerta">
                   Debe completar todos los campos de manera correcta.
                 </div>
             </form>
