@@ -1,5 +1,8 @@
 // la palabra ''campo'' que va como parametro puede haber sido cualquiera, es una palabra 
 // inventada, es un contenedor.
+
+// Como estaba la funcion al principio
+
 function campoRequerido(campo){
     console.log('Desde la funcion campo requerido')
     console.log(campo)
@@ -11,11 +14,16 @@ function campoRequerido(campo){
         // console.log('Pasó la validación')
         // className = cambiar las etiquetas de la clase que tiene esa funcion
         campo.className = 'form-control is-valid';
+        // en caso de que cumpla con la condicion, retorna true que nos sirve para utilizar
+        // un If luego para validar el formulario completo
+        return true;
     } else {
         // console.log('No pasó la validación')
         campo.className = 'form-control is-invalid';
+        return false;
     }
 }
+
 
 // Las EXPRESIONES REGULARES sirven para crear un patron para validar datos
 // el cual devuelve un dato booleano TRUE o FALSE
@@ -33,9 +41,11 @@ function validarNumeros(input){
     if(patron.test(input.value)){
         // SI cumple la expresion regular:
         input.className = 'form-control is-valid';
+        return true;
     } else { 
         // si NO cumple la expresion regular:
         input.className = 'form-control is-invalid';
+        return false;
     }
 }
 
@@ -49,18 +59,33 @@ function validarURL(input){
     let patron = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
     if(patron.test(input.value)){
         input.className = 'form-control is-valid';
+        return true;
     } else { 
         input.className = 'form-control is-invalid';
+        return false;
     }
 }
 
 // validar el formulario completo contemplando el evento 'submit'
 // podemos usar e o event como parametro
+// el evento Event es aquel que va registrando cada cosa que sucede en la pag
 function validarGeneral(e){
-    // es para evitar que esa funcion se realice
+    // preventDefault previene el movimiento por defecto(lo anula)
     e.preventDefault()
     console.log('aqui tengo que validar todo de nuevo');
-    
+    // volver a validar todos los campos
+    // if(preguntar si el codigo es correcto && pregunto si el producto es correcto)
+    // si creamos una variable dentro de las llaves, fuera de las mismas no funcionan
+    let alerta = document.querySelector('#msjAlerta');
+    if(campoRequerido(campoCodigo) && campoRequerido(campoProducto) &&
+    campoRequerido(campoDescripcion) && validarNumeros(campoCantidad)
+    && validarURL(campoURL)){
+        console.log('si paso la validacion');
+        alerta.className = 'alert alert-warning ms-5 my-3 d-none text-center lead';
+    } else {
+        console.log('no paso la validacion');
+        alerta.className = 'alert alert-warning ms-5 my-3 text-center lead';
+    }
 }
 
 
@@ -88,6 +113,6 @@ campoDescripcion.addEventListener('blur', () => {campoRequerido(campoDescripcion
 campoCantidad.addEventListener('blur', () => {validarNumeros(campoCantidad)});
 campoURL.addEventListener('blur', () => {validarURL(campoURL)});
 formularioProducto.addEventListener('submit', validarGeneral);
-// 1ER CAMPO: EVENTO A SUCEDER, 2DO CAMPO EJECUTAR LA SIG FUNCION.
+// 1ER CAMPO: EVENTO A SUCEDER, 2DO CAMPO FUNCION A EJECUTAR.
  
 // BLUR es cuando PIERDE EL FOCO un campo
