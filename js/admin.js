@@ -12,8 +12,11 @@ let campoDescripcion = document.querySelector('#descripcion');
 let campoCantidad = document.querySelector('#cantidad');
 let campoURL = document.querySelector('#url');
 let formularioProducto = document.querySelector('#formProducto')
-// lista de productos
-let listaProductos = [];
+// Lista de productos
+// El metodo inverso de JSON es parse
+// Primero nos fijamos si en el Local Storage hay datos guardados, caso contrario
+// creamos directamente el arreglo vacio
+ let listaProductos = JSON.parse(localStorage.getItem('listaProductosKey')) || [];
 
 // para ver si esta vinculado en el inspector de elementos usamos console log
 console.log(campoCodigo)
@@ -59,6 +62,14 @@ function crearProducto(){
     // web storage almacenamiento que tienen por defecto los navegadores donde podemos
     // guardar info, local-storage queda lo guardado siempre hasta borrar.
     // session storage, lo guardado dura 1 sesion hasta que cerramos la pag.
+    // GUARDAR EN LOCAL STORAGE EL ARREGLO DE PRODUCTOS
+    guardarLocalstorage();
+    // mostrar un msj al usuario
+    Swal.fire(
+        'Buen trabajo!',
+        'Su producto fue correctamente creado!',
+        'success'
+      )
 }
 
 // si es una tarea especifica, la guardamos dentro de una funcion y luego la invocamos
@@ -72,4 +83,12 @@ function limpiarFormulario(){
     campoDescripcion.className = 'form-control';
     campoCantidad.className = 'form-control';
     campoURL.className = 'form-control';
+}
+
+function guardarLocalstorage(){
+    // el metodo para guardar en local storage se llama setItem seguida por una palabra
+    // inventada o palabra clave para guardar
+    // JSON tiene 2 metodos, 1 transforma a metodo JSON y otro que hace lo opuesto
+    // stringify = transforma lo que queremos a formato JSON
+    localStorage.setItem('listaProductosKey', JSON.stringify(listaProductos))
 }
