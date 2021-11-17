@@ -1,93 +1,8 @@
-// la palabra ''campo'' que va como parametro puede haber sido cualquiera, es una palabra 
-// inventada, es un contenedor.
-
-// Como estaba la funcion al principio
-
-function campoRequerido(campo){
-    console.log('Desde la funcion campo requerido')
-    console.log(campo)
-    // value contiene lo que tiene escrito cada input
-    // trim sirve para que quite los espacios vacios, caracteres especiales, 
-    // comillas de adelante de la cadena de texto
-    // para ingresar caracteres no menor a 10 campo.value.trim().minlength > 10
-    if(campo.value.trim().length > 0){
-        // console.log('Pasó la validación')
-        // className = cambiar las etiquetas de la clase que tiene esa funcion
-        campo.className = 'form-control is-valid';
-        // en caso de que cumpla con la condicion, retorna true que nos sirve para utilizar
-        // un If luego para validar el formulario completo
-        return true;
-    } else {
-        // console.log('No pasó la validación')
-        campo.className = 'form-control is-invalid';
-        return false;
-    }
-}
-
-
-// Las EXPRESIONES REGULARES sirven para crear un patron para validar datos
-// el cual devuelve un dato booleano TRUE o FALSE
-
-// 1er paso crear el patron: (Crear una expresion regular)
-
-function validarNumeros(input){
-    // va entre BARRAS INVERTIDAS la estructura que quiero armar
-    // solo este patron va a aceptar numeros
-    // para poner la CANTIDAD lo ponemos entre llavesitas
-    // MINIMO el 1er numero y MAXIMO el 2do numero
-    let patron = /^[0-9]{1,3}$/;
-    // probar el funcionamiento del patron o expresion regular
-    // TEST es un METDOO que tiene js para VALIDAR la expresion
-    if(patron.test(input.value)){
-        // SI cumple la expresion regular:
-        input.className = 'form-control is-valid';
-        return true;
-    } else { 
-        // si NO cumple la expresion regular:
-        input.className = 'form-control is-invalid';
-        return false;
-    }
-}
-
-
-// Funcion para validar URL
-
-function validarURL(input){
-    // crear la expresion regular
-    // se puede repetir el nombre de la funcion, creada dentro de otra
-    // porque solo existe dentro de la misma
-    let patron = /^https?:\/\/[\w\-]+(\.[\w\-]+)+[/#?]?.*$/;
-    if(patron.test(input.value)){
-        input.className = 'form-control is-valid';
-        return true;
-    } else { 
-        input.className = 'form-control is-invalid';
-        return false;
-    }
-}
-
-// validar el formulario completo contemplando el evento 'submit'
-// podemos usar e o event como parametro
-// el evento Event es aquel que va registrando cada cosa que sucede en la pag
-function validarGeneral(e){
-    // preventDefault previene el movimiento por defecto(lo anula)
-    e.preventDefault()
-    console.log('aqui tengo que validar todo de nuevo');
-    // volver a validar todos los campos
-    // if(preguntar si el codigo es correcto && pregunto si el producto es correcto)
-    // si creamos una variable dentro de las llaves, fuera de las mismas no funcionan
-    let alerta = document.getElementById('msjAlerta');
-    if(campoRequerido(campoCodigo) && campoRequerido(campoProducto) &&
-    campoRequerido(campoDescripcion) && validarNumeros(campoCantidad)
-    && validarURL(campoURL)){
-        console.log('si paso la validacion');
-        alerta.className = 'alert alert-danger ms-5 my-3 d-none text-center lead';
-    } else {
-        console.log('no paso la validacion');
-        alerta.className = 'alert alert-danger ms-5 my-3 text-center lead';
-    }
-}
-
+// Lo primero que va para poder importar alguna funcion de otro archivo
+// es ''import'' luego va de donde proviende lo que estamos trayendo desde otro lugar
+// separadas por una coma '' , '' traemos el resto de las funciones
+import {campoRequerido, validarNumeros, validarURL, validarGeneral} from './helpers o validaciones.js'
+import {Producto} from './productoClass.js'
 
 // agregar eventos a los elementos del formulario
 // creamos una variable y buscamos en el DOM con el querySelector el selector de la clase
@@ -97,8 +12,10 @@ let campoDescripcion = document.querySelector('#descripcion');
 let campoCantidad = document.querySelector('#cantidad');
 let campoURL = document.querySelector('#url');
 let formularioProducto = document.querySelector('#formProducto')
+// lista de productos
+let listaProductos = [];
 
-// para ver si esta vinculado en el inspector de elementos usamos el console log
+// para ver si esta vinculado en el inspector de elementos usamos console log
 console.log(campoCodigo)
 
 // le estoy agregando un manejador de eventos a la variable campoCodigo.
@@ -112,7 +29,47 @@ campoProducto.addEventListener('blur', () => {campoRequerido(campoProducto)});
 campoDescripcion.addEventListener('blur', () => {campoRequerido(campoDescripcion)});
 campoCantidad.addEventListener('blur', () => {validarNumeros(campoCantidad)});
 campoURL.addEventListener('blur', () => {validarURL(campoURL)});
-formularioProducto.addEventListener('submit', validarGeneral);
+formularioProducto.addEventListener('submit', guardarProducto);
+
 // 1ER CAMPO: EVENTO A SUCEDER, 2DO CAMPO FUNCION A EJECUTAR.
  
 // BLUR es cuando PIERDE EL FOCO un campo
+
+function guardarProducto(e){
+    e.preventDefault()
+    // validar los campos del formulario
+    if(validarGeneral(campoCodigo, campoProducto, campoDescripcion, campoCantidad, campoURL)){
+        // agregar/crear un producto
+        crearProducto();
+    }
+}
+
+function crearProducto(){
+    console.log('Aqui creo el producto')
+    // crear el objeto producto
+    // value es el valor o lo que contiene el campo de un input
+    let productoNuevo = new Producto(campoCodigo.value, campoProducto.value, 
+        campoDescripcion.value, campoCantidad.value, campoURL.value);
+    console.log(productoNuevo);
+    // guardar el producto creado en el arreglo
+    listaProductos.push(productoNuevo);
+    console.log(listaProductos);
+    // limpiar el formulario
+    limpiarFormulario();
+    // web storage almacenamiento que tienen por defecto los navegadores donde podemos
+    // guardar info, local-storage queda lo guardado siempre hasta borrar.
+    // session storage, lo guardado dura 1 sesion hasta que cerramos la pag.
+}
+
+// si es una tarea especifica, la guardamos dentro de una funcion y luego la invocamos
+// las veces que necesitemos
+function limpiarFormulario(){
+    // limpiar los value de todo el formulario
+     formularioProducto.reset();
+    // limpiar las clases
+    campoCodigo.className = 'form-control';
+    campoProducto.className = 'form-control';
+    campoDescripcion.className = 'form-control';
+    campoCantidad.className = 'form-control';
+    campoURL.className = 'form-control';
+}
