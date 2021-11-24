@@ -16,10 +16,15 @@ let formularioProducto = document.querySelector('#formProducto')
 // El metodo inverso de JSON es parse
 // Primero nos fijamos si en el Local Storage hay datos guardados, caso contrario
 // creamos directamente el arreglo vacio
+
  let listaProductos = JSON.parse(localStorage.getItem('listaProductosKey')) || [];
 
+
+cargaInicial()
+
+
 // para ver si esta vinculado en el inspector de elementos usamos console log
-console.log(campoCodigo)
+// console.log(campoCodigo)
 
 // le estoy agregando un manejador de eventos a la variable campoCodigo.
 // si lo hacemos desde jv ponemos el nombre del evento directamente.
@@ -70,6 +75,9 @@ function crearProducto(){
         'Su producto fue correctamente creado!',
         'success'
       )
+    // creo una nueva fila en la tabla
+    // hacemos que crearFIla reciba como parametro a productoNuevo
+    crearFila(productoNuevo);
 }
 
 // si es una tarea especifica, la guardamos dentro de una funcion y luego la invocamos
@@ -91,4 +99,39 @@ function guardarLocalstorage(){
     // JSON tiene 2 metodos, 1 transforma a metodo JSON y otro que hace lo opuesto
     // stringify = transforma lo que queremos a formato JSON
     localStorage.setItem('listaProductosKey', JSON.stringify(listaProductos))
+}
+
+function crearFila(producto){
+    let tabla = document.querySelector('#tablaProductos')
+    // el += agrega al final lo que estamos adjuntando
+    tabla.innerHTML += `<tr>
+    <td>${producto.codigo}</td>
+    <td>${producto.producto}</td>
+    <td>${producto.descripcion}</td>
+    <td>${producto.cantidad}</td>
+    <td>${producto.url}</td>
+    <td>
+      <button class="btn btn-warning">Editar</button
+      ><button class="btn btn-danger">Borrar</button>
+    </td>
+  </tr>`
+}
+
+function cargaInicial(){
+    // es para verificar si hay algo en el localStorage y si hay, que lo represente
+    // en la tabla de productos (filas)
+    if(listaProductos > 0){
+        // dibujar fila
+        // metodo forEach siempre lleva por parametro la funcion anonima
+        // sirve para hacer un bucle que recorre posision x posision
+        listaProductos.forEach((itemProducto) => {
+            crearFila(itemProducto)
+        });
+    }
+}
+
+function borrarTabla(){
+    let tabla = document.querySelector('#tablaProductos');
+    // usamos innerHTML para borrar el codigo dejando el campo vacio entre comillas
+    tabla.innerHTML = '';
 }
