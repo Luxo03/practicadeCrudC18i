@@ -19,9 +19,8 @@ let formularioProducto = document.querySelector('#formProducto')
 
  let listaProductos = JSON.parse(localStorage.getItem('listaProductosKey')) || [];
 
-
-cargaInicial()
-
+// llamar a la funcion cargaInicial
+cargaInicial();
 
 // para ver si esta vinculado en el inspector de elementos usamos console log
 // console.log(campoCodigo)
@@ -47,7 +46,7 @@ function guardarProducto(e){
     e.preventDefault()
     // validar los campos del formulario
     if(validarGeneral(campoCodigo, campoProducto, campoDescripcion, campoCantidad, campoURL)){
-        // agregar/crear un producto
+        // caso 1: agregar o crear un producto
         crearProducto();
     }
 }
@@ -111,16 +110,16 @@ function crearFila(producto){
     <td>${producto.cantidad}</td>
     <td>${producto.url}</td>
     <td>
-      <button class="btn btn-warning">Editar</button
+      <button class="btn btn-warning" onclick='prepararEdicionProducto(${producto.codigo})'>Editar</button
       ><button class="btn btn-danger">Borrar</button>
     </td>
-  </tr>`
+  </tr>`;
 }
 
 function cargaInicial(){
     // es para verificar si hay algo en el localStorage y si hay, que lo represente
     // en la tabla de productos (filas)
-    if(listaProductos > 0){
+    if(listaProductos.length > 0){
         // dibujar fila
         // metodo forEach siempre lleva por parametro la funcion anonima
         // sirve para hacer un bucle que recorre posision x posision
@@ -134,4 +133,17 @@ function borrarTabla(){
     let tabla = document.querySelector('#tablaProductos');
     // usamos innerHTML para borrar el codigo dejando el campo vacio entre comillas
     tabla.innerHTML = '';
+}
+
+
+// window es un objeto del BOM
+window.prepararEdicionProducto = function (codigo){
+    console.log(codigo)
+    // obtener el objeto a modificar
+    // metodo find es para buscar algo en un arreglo
+    let productoBuscado = listaProductos.find((itemProducto)=>{
+        return itemProducto.codigo == codigo})
+    console.log(productoBuscado);
+    // mostrar los datos en el form
+    campoCodigo.value = productoBuscado.codigo;
 }
