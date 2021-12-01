@@ -12,46 +12,62 @@ let campoDescripcion = document.querySelector('#descripcion');
 let campoCantidad = document.querySelector('#cantidad');
 let campoURL = document.querySelector('#url');
 let formularioProducto = document.querySelector('#formProducto')
+
 // Lista de productos
 // El metodo inverso de JSON es parse
 // Primero nos fijamos si en el Local Storage hay datos guardados, caso contrario
 // creamos directamente el arreglo vacio
+let listaProductos = JSON.parse(localStorage.getItem('listaProductosKey')) || [];
 
- let listaProductos = JSON.parse(localStorage.getItem('listaProductosKey')) || [];
+ let productoExistente = false; // si productoExistente = false quiero crear un nuevo producto,
+ // caso contrario quiero modificar
+ let btnAgregar = document.querySelector('#btnAgregar');
 
-// llamar a la funcion cargaInicial
-cargaInicial();
-
-// para ver si esta vinculado en el inspector de elementos usamos console log
-// console.log(campoCodigo)
-
-// le estoy agregando un manejador de eventos a la variable campoCodigo.
-// si lo hacemos desde jv ponemos el nombre del evento directamente.
-// cuando ocurra el evento, queremos que se produzca la siguiente funcion.
-// esta es la forma de agregar funciones a elementos cuando ocurra algun evento en el DOM.
-// para INVOCAR una FUNCION con PARAMETRO, tenemos que crear una FUNCION ANONIMA
-
-campoCodigo.addEventListener('blur', () => {campoRequerido(campoCodigo)});
-campoProducto.addEventListener('blur', () => {campoRequerido(campoProducto)});
-campoDescripcion.addEventListener('blur', () => {campoRequerido(campoDescripcion)});
-campoCantidad.addEventListener('blur', () => {validarNumeros(campoCantidad)});
-campoURL.addEventListener('blur', () => {validarURL(campoURL)});
-formularioProducto.addEventListener('submit', guardarProducto);
-
-// 1ER CAMPO: EVENTO A SUCEDER, 2DO CAMPO FUNCION A EJECUTAR.
  
-// BLUR es cuando PIERDE EL FOCO un campo
+ // para ver si esta vinculado en el inspector de elementos usamos console log
+ // console.log(campoCodigo)
+ 
+ // le estoy agregando un manejador de eventos a la variable campoCodigo.
+ // si lo hacemos desde jv ponemos el nombre del evento directamente.
+ // cuando ocurra el evento, queremos que se produzca la siguiente funcion.
+ // esta es la forma de agregar funciones a elementos cuando ocurra algun evento en el DOM.
+ // para INVOCAR una FUNCION con PARAMETRO, tenemos que crear una FUNCION ANONIMA
+ 
+ campoCodigo.addEventListener('blur', () => {campoRequerido(campoCodigo)});
+ campoProducto.addEventListener('blur', () => {campoRequerido(campoProducto)});
+ campoDescripcion.addEventListener('blur', () => {campoRequerido(campoDescripcion)});
+ campoCantidad.addEventListener('blur', () => {validarNumeros(campoCantidad)});
+ campoURL.addEventListener('blur', () => {validarURL(campoURL)});
+ formularioProducto.addEventListener('submit', guardarProducto);
+ btnAgregar.addEventListener('click', limpiarFormulario);
 
-function guardarProducto(e){
-    e.preventDefault()
-    // validar los campos del formulario
-    if(validarGeneral(campoCodigo, campoProducto, campoDescripcion, campoCantidad, campoURL)){
-        // caso 1: agregar o crear un producto
-        crearProducto();
+ 
+ // llamar a la funcion cargaInicial
+
+ cargaInicial();
+ 
+ // 1ER CAMPO: EVENTO A SUCEDER, 2DO CAMPO FUNCION A EJECUTAR.
+ 
+ // BLUR es cuando PIERDE EL FOCO un campo
+ function guardarProducto(e){
+     e.preventDefault()
+     // validar los campos del formulario
+     if(validarGeneral(campoCodigo, campoProducto, campoDescripcion, 
+        campoCantidad, campoURL)){
+            if(productoExistente == false){
+                // caso 1: agregar o crear un producto
+                crearProducto();
+            } else {
+                // caso 2: el usuario quiere editar un producto
+                modificarProducto();
+            }
+        }
     }
-}
 
-function crearProducto(){
+
+    
+    // si declaramos una variable dentro de una funcion, esa variable solo existe dentro de la misma
+    function crearProducto(){
     console.log('Aqui creo el producto')
     // crear el objeto producto
     // value es el valor o lo que contiene el campo de un input
@@ -90,6 +106,8 @@ function limpiarFormulario(){
     campoDescripcion.className = 'form-control';
     campoCantidad.className = 'form-control';
     campoURL.className = 'form-control';
+    // limpiar la variable booleana
+    productoExistente == false;
 }
 
 function guardarLocalstorage(){
@@ -110,8 +128,8 @@ function crearFila(producto){
     <td>${producto.cantidad}</td>
     <td>${producto.url}</td>
     <td>
-      <button class="btn btn-warning" onclick='prepararEdicionProducto(${producto.codigo})'>Editar</button
-      ><button class="btn btn-danger">Borrar</button>
+      <button class="btn btn-warning" onclick="prepararEdicionProducto('${producto.codigo}')">Editar</button
+      ><button class="btn btn-danger" onclick="borrarProducto('${producto.codigo}')">Borrar</button>
     </td>
   </tr>`;
 }
@@ -140,10 +158,68 @@ function borrarTabla(){
 window.prepararEdicionProducto = function (codigo){
     console.log(codigo)
     // obtener el objeto a modificar
-    // metodo find es para buscar algo en un arreglo
+    // metodo find es para buscar algo en un arreglo, en forma de bucle
     let productoBuscado = listaProductos.find((itemProducto)=>{
         return itemProducto.codigo == codigo})
     console.log(productoBuscado);
     // mostrar los datos en el form
     campoCodigo.value = productoBuscado.codigo;
+    campoProducto.value = productoBuscado.producto;
+    campoDescripcion.value = productoBuscado.descripcion;
+    campoCantidad.value = productoBuscado.cantidad;
+    campoURL.value = productoBuscado.url;
+    // aqui modifico la variable booleana
+    productoExistente = true;
+}
+
+function modificarProducto(){
+    console.log('aqui quiero modificar este producto')
+    // buscar la posicion de mi producto dentro del arreglo
+    // findIndex sabe encontrar indices, trabaja como un bucle
+    let posicionProducto = listaProductos.findIndex((itemProducto)=>{
+        return itemProducto.codigo == campoCodigo.value});
+        console.log(posicionProducto);
+    // modificar los datos de ese producto dentro del arreglo
+    listaProductos[posicionProducto].producto = campoProducto.value;
+    listaProductos[posicionProducto].descripcion = campoDescripcion.value;
+    listaProductos[posicionProducto].cantidad = campoCantidad.value;
+    listaProductos[posicionProducto].url = campoURL.value;
+    console.log(listaProductos);
+    // actualizar los datos del localstorage
+    guardarLocalstorage();
+    // mostrar un cartel indicando al usuario que se ha modificado su producto
+    Swal.fire(
+        'Producto modificado',
+        'Su producto fue correctamente editado',
+        'success' // tilde verde
+      )
+    // limpiar los datos del formulario
+    limpiarFormulario();
+    // actualizar la tabla
+    borrarTabla();
+    // dibujar fila
+    listaProductos.forEach((itemProducto) => {crearFila(itemProducto)});
+}
+
+window.borrarProducto = function (codigo) {
+    console.log(codigo);
+    // borro el producto del arreglo
+    // filter (Filtro): retorna el arreglo con todos los valores que 
+    // cumplan la condicion logica que nosotros quieramos.
+    let arregloProductoBorrado = listaProductos.filter((itemProducto)=>{
+        return itemProducto.codigo != codigo})
+    console.log(arregloProductoBorrado);
+    // actualizo los datos en el localstorage
+    // listaProductos ahora tendra el valor de arregloProductoBorrado (que es el arreglo filtrado)
+    listaProductos = arregloProductoBorrado;
+    guardarLocalstorage();
+    // actualizar los datos de la tabla
+    borrarTabla();
+    // y volver a dibujar la tabla
+    listaProductos.forEach((itemProducto) => {crearFila(itemProducto)});
+    Swal.fire(
+        'Producto Eliminado',
+        'Su producto fue correctamente eliminado del sistema',
+        'success'
+      )
 }

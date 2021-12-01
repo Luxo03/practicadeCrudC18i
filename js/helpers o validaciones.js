@@ -71,7 +71,7 @@ export function validarGeneral(
   campoProducto,
   campoDescripcion,
   campoCantidad,
-  campoURL
+  campoURL,
 ) {
   // preventDefault previene el movimiento por defecto(lo anula, no permite que se ejecute)
   // e.preventDefault()
