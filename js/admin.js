@@ -158,7 +158,7 @@ function borrarTabla(){
 window.prepararEdicionProducto = function (codigo){
     console.log(codigo)
     // obtener el objeto a modificar
-    // metodo find es para buscar algo en un arreglo, en forma de bucle
+    // metodo find es para buscar un elemento dentro de un arreglo, en forma de bucle
     let productoBuscado = listaProductos.find((itemProducto)=>{
         return itemProducto.codigo == codigo})
     console.log(productoBuscado);
